@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>disablecategoryurlrewrite</name>
+    <displayName>Désactive la mise à jour automatique des URLs catégories</displayName>
+    <version>1.0.0</version>
+    <author>Thierry Laval</author>
+    <tab>administration</tab>
+    <description>Empêche la modification automatique du slug (link_rewrite) des catégories lors du changement de leur nom.</description>
+    <need_instance>0</need_instance>
+    <ps_versions_compliancy>
+        <min>1.7.0.0</min>
+        <max>9.9.9</max>
+    </ps_versions_compliancy>
+</module>
