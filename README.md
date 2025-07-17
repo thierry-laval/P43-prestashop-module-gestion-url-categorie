@@ -4,8 +4,8 @@
 
 👤 &nbsp; **Thierry LAVAL** [🇫🇷 Contactez-moi 🇬🇧](mailto:contact@thierrylaval.dev)
 
-* Github: [@Thierry Laval](https://github.com/thierry-laval)  
-* LinkedIn: [@Thierry Laval](https://www.linkedin.com/in/thierry-laval)  
+* Github: [@Thierry Laval](https://github.com/thierry-laval)
+* LinkedIn: [@Thierry Laval](https://www.linkedin.com/in/thierry-laval)
 * Visitez ==> 🏠 [Site Web](https://thierrylaval.dev)
 
 ***
@@ -21,27 +21,32 @@ _`Début du projet le 17/07/2025`_
 ### 🧩 Module pour désactiver la mise à jour automatique de l'URL des catégories
 
 Ce module PrestaShop empêche la modification automatique du slug (`link_rewrite`) des catégories lors du changement de leur nom.  
-Il garantit ainsi la stabilité des URLs des catégories pour éviter toute casse de liens ou impact négatif sur le référencement naturel.
+Il garantit ainsi la stabilité des URLs des catégories pour éviter les impacts négatifs sur le référencement et les liens externes.
 
 #### 🔁 Fonctionnement
 
-* À chaque mise à jour d'une catégorie, le module restaure l'ancien slug dans la base.  
-* Bloque toute modification automatique du `link_rewrite`.  
-* Simple à utiliser, aucune configuration requise.  
+* À chaque mise à jour d'une catégorie, le module restaure l'ancien slug dans la base.
+* Empêche toute modification automatique du `link_rewrite`.
+* Simple, sans configuration nécessaire.
 
 ## Fonctionnalités
 
-* Compatible PrestaShop 1.7, 8.x et 9.x.  
-* Installation et activation rapides.  
-* Léger, sans impact sur les performances.  
-* Utilisation du hook `actionCategoryUpdate` pour intervenir juste avant la sauvegarde.  
+* Compatible PrestaShop 1.7, 8.x et 9.x.
+* Installation et activation faciles.
+* Léger, performant et sans impact sur les performances.
+* Utilise le hook `actionCategoryUpdate` pour intervenir avant la sauvegarde.
+* Option dans le back-office pour activer/désactiver le blocage.
+* Prise en compte de tous les langages pour la catégorie.
+* Mise à jour directe en base via SQL (avec `Db::update`) pour éviter la récursion inutile.
+* Logging simple dans un fichier pour tracer les actions, avec gestion silencieuse des erreurs.
+* Code commenté, sécurisé (pSQL) et optimisé.
 
 ## Installation
 
-1. Renommer le module en `disablecategoryurlrewrite.zip` (optionnel).  
-2. Copier le dossier `disablecategoryurlrewrite` dans `/modules/`.  
-3. Installer et activer le module via le back-office PrestaShop.  
-4. Le module est actif immédiatement, aucune configuration nécessaire.  
+1. Renommer le module par - disablecategoryurlrewrite.zip -
+2. Copier le dossier `disablecategoryurlrewrite` dans `/modules/`.
+3. Installer et activer le module dans le back-office PrestaShop.
+4. Le module est actif immédiatement, aucune configuration requise.
 
 ### 📦 &nbsp; Technologies utilisées
 
