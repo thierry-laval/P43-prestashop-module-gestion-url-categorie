@@ -2,7 +2,7 @@
 <module>
     <name>disablecategoryurlrewrite</name>
     <displayName>Désactive la mise à jour automatique des URLs catégories</displayName>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <author>Thierry Laval</author>
     <tab>administration</tab>
     <description>Empêche la modification automatique du slug (link_rewrite) des catégories lors du changement de leur nom.</description>
