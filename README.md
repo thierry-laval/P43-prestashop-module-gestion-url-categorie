@@ -38,9 +38,10 @@ Il garantit ainsi la stabilité des URLs des catégories pour éviter les impact
 
 ## Installation
 
-1. Copier le dossier `disablecategoryurlrewrite` dans `/modules/`.
-2. Installer et activer le module dans le back-office PrestaShop.
-3. Le module est actif immédiatement, aucune configuration requise.
+1. Renommer le module par - disablecategoryurlrewrite.zip -
+2. Copier le dossier `disablecategoryurlrewrite` dans `/modules/`.
+3. Installer et activer le module dans le back-office PrestaShop.
+4. Le module est actif immédiatement, aucune configuration requise.
 
 ### 📦 &nbsp; Technologies utilisées
 
