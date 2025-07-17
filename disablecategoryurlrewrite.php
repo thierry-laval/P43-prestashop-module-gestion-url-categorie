@@ -28,7 +28,6 @@ class DisableCategoryUrlRewrite extends Module
     {
         return parent::install()
             && $this->registerHook('actionCategoryUpdate')
-            && $this->registerHook('displayBackOfficeHeader')
             && Configuration::updateValue('DISABLE_CAT_URL_REWRITE_ACTIVE', 1);
     }
 
@@ -38,6 +37,9 @@ class DisableCategoryUrlRewrite extends Module
             && Configuration::deleteByName('DISABLE_CAT_URL_REWRITE_ACTIVE');
     }
 
+    /**
+     * Gestion du formulaire de configuration dans le back-office
+     */
     public function getContent()
     {
         if (Tools::isSubmit('submitDisableCatUrlRewrite')) {
@@ -72,13 +74,13 @@ class DisableCategoryUrlRewrite extends Module
                 ],
                 'submit' => [
                     'title' => $this->l('Sauvegarder'),
+                    'class' => 'btn btn-default pull-right',
                 ],
             ],
         ];
 
         $helper = new HelperForm();
         $helper->show_cancel_button = false;
-        $helper->table = $this->table;
         $helper->submit_action = 'submitDisableCatUrlRewrite';
         $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
@@ -98,45 +100,55 @@ class DisableCategoryUrlRewrite extends Module
             return;
         }
 
-        if (isset($params['category']) && Validate::isLoadedObject($params['category'])) {
-            $category = $params['category'];
-            $id_category = (int)$category->id;
+        if (!isset($params['category']) || !Validate::isLoadedObject($params['category'])) {
+            return;
+        }
 
-            // Récupérer tous les anciens link_rewrite pour toutes les langues
-            $sql = 'SELECT id_lang, link_rewrite 
-                    FROM ' . _DB_PREFIX_ . 'category_lang 
-                    WHERE id_category = ' . $id_category;
-            $results = Db::getInstance()->executeS($sql);
+        $category = $params['category'];
+        $id_category = (int)$category->id;
 
-            if (!$results) {
-                $this->log('Aucun link_rewrite trouvé pour la catégorie ID ' . $id_category);
-                return;
+        // Récupérer les anciens link_rewrite pour toutes les langues
+        $sql = 'SELECT id_lang, link_rewrite 
+                FROM ' . _DB_PREFIX_ . 'category_lang 
+                WHERE id_category = ' . $id_category;
+        $results = Db::getInstance()->executeS($sql);
+
+        if (!$results) {
+            $this->_log('Aucun link_rewrite trouvé pour la catégorie ID ' . $id_category);
+            return;
+        }
+
+        foreach ($results as $row) {
+            $id_lang = (int)$row['id_lang'];
+            $old_link_rewrite = $row['link_rewrite'];
+
+            // Le nouvel objet Category a link_rewrite sous forme de tableau par langue
+            $current_link_rewrite = '';
+            if (is_array($category->link_rewrite) && isset($category->link_rewrite[$id_lang])) {
+                $current_link_rewrite = $category->link_rewrite[$id_lang];
             }
 
-            // Pour chaque langue, remettre l'ancien link_rewrite en base (direct SQL)
-            foreach ($results as $row) {
-                $id_lang = (int)$row['id_lang'];
-                $old_link_rewrite = pSQL($row['link_rewrite']);
+            // Si le slug a changé, on remet l'ancien slug via update sécurisé
+            if ($current_link_rewrite !== $old_link_rewrite) {
+                $update = ['link_rewrite' => pSQL($old_link_rewrite)];
+                $where = 'id_category = ' . $id_category . ' AND id_lang = ' . $id_lang;
 
-                // Si le slug a changé, on remet l'ancien slug
-                if ($category->link_rewrite != $old_link_rewrite) {
-                    $update_sql = 'UPDATE ' . _DB_PREFIX_ . 'category_lang 
-                                   SET link_rewrite = "' . $old_link_rewrite . '" 
-                                   WHERE id_category = ' . $id_category . ' AND id_lang = ' . $id_lang;
-                    Db::getInstance()->execute($update_sql);
-                    $this->log('Blocage update slug catégorie ID ' . $id_category . ', langue ' . $id_lang . ' remis à "' . $old_link_rewrite . '"');
+                if (Db::getInstance()->update('category_lang', $update, $where)) {
+                    $this->_log("Blocage update slug catégorie ID $id_category, langue $id_lang remis à '$old_link_rewrite'");
+                } else {
+                    $this->_log("Erreur mise à jour slug catégorie ID $id_category, langue $id_lang");
                 }
             }
         }
     }
 
     /**
-     * Petit logger simple dans un fichier
+     * Logger simple dans un fichier
      */
-    protected function log($message)
+    protected function _log($message)
     {
         $date = date('Y-m-d H:i:s');
         $text = "[$date] $message\n";
-        file_put_contents(self::LOG_FILE, $text, FILE_APPEND);
+        @file_put_contents(self::LOG_FILE, $text, FILE_APPEND);
     }
 }
